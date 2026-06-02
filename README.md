@@ -2,8 +2,7 @@
 
 ## Integrantes
 - Vielka Katherine Borja Roldán
-- José Fernández: Posicionamiento de header, main y footer.
-(Indicar claramente qué desarrolló cada integrante)
+- José Carlos Fernández Zambrano
 
 ## Descripción del emprendimiento
 Página web de restaurantes.
