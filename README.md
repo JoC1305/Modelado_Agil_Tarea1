@@ -1,10 +1,8 @@
 # Página web de restaurante aplicando css
 
-## Integrantes y contribuciones
-- Alexis Lucas: Tipogrsafía, color y tamaño de texto
-- José Fernández: Posicionamiento de header, main y footer.
-- Jostin Romero: Aplicación de grid y grid-areas
-(Indicar claramente qué desarrolló cada integrante)
+## Integrantes
+- Vielka Katherine Borja Roldán
+- José Carlos Fernández Zambrano
 
 ## Descripción del emprendimiento
 Página web de restaurantes.
@@ -32,5 +30,3 @@ Páginas:
 - Planificación: estructura de información y asignación de páginas.
 - Implementación: HTML5 semántico y CSS básico.
 - Revisión: pruebas de navegación, validación HTML y accesibilidad.
-
-## Conclusiones individuales
