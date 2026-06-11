@@ -1,0 +1,304 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: Roboto, Arial, sans-serif;
+  color: #161616;
+  background: #fffdf9;
+}
+
+#root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+main {
+  width: 100%;
+}
+
+.color-letra1 {
+  color: #08712b;
+}
+
+.color-letra2 {
+  color: crimson;
+}
+
+.container {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.site-header {
+  background-color: rgb(236, 236, 236);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.site-header .container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 24px;
+}
+
+.logo {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.logo img {
+  width: 200px;
+  padding: 18px 20px;
+  display: block;
+}
+
+.site-header nav {
+  justify-self: end;
+}
+
+.site-header ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.site-header button {
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.site-header button:hover,
+.site-header button.active {
+  color: crimson;
+}
+
+h1,
+h2 {
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  margin: 15px 0;
+}
+
+p {
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  line-height: 1.8;
+  margin: 10px 0;
+}
+
+.boton,
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #024e1b;
+  border: none;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.boton:hover,
+.btn:hover {
+  background-color: crimson;
+}
+
+#hero {
+  min-height: 82vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.72)), url('/assets/imgs/fondo.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+#hero h1,
+#hero p {
+  color: white;
+}
+
+#contexto .container,
+.plato .container {
+  padding: 64px 0;
+}
+
+.split {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+}
+
+.texto {
+  text-align: center;
+}
+
+.imagen {
+  min-height: 320px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center center;
+}
+
+#contexto .imagen {
+  background-image: url('/assets/imgs/ristorant.jpg');
+}
+
+#ubicacion {
+  min-height: 400px;
+  margin-top: 20px;
+  padding: 56px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/assets/imgs/bandera.jpg');
+  background-size: cover;
+  background-position: center center;
+}
+
+#ubicacion h2,
+#ubicacion p {
+  color: white;
+}
+
+#rossonero .imagen {
+  background-image: url('/assets/imgs/risotto.jpg');
+}
+
+#nerazzurro .imagen {
+  background-image: url('/assets/imgs/nerazzurro.jpg');
+}
+
+#bianconero .imagen {
+  background-image: url('/assets/imgs/tajarin.jpg');
+}
+
+.precio {
+  font-size: 1.8rem;
+  color: crimson;
+  font-weight: 700;
+}
+
+.page {
+  padding: 36px 0 80px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 520px;
+  margin: auto;
+  padding: 36px 0;
+  font-size: 1.2rem;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #c9c9c9;
+  border-radius: 5px;
+  padding: 12px;
+  font: inherit;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+#contacto-alt {
+  text-align: center;
+  line-height: 2;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+#acerca-hero,
+#historia,
+#contacto,
+#soporte {
+  padding: 56px 0;
+}
+
+footer {
+  background-color: rgb(236, 236, 236);
+  text-align: center;
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #555;
+}
+
+footer .container {
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+@media (min-width: 720px) {
+  .split {
+    grid-template-columns: minmax(280px, 400px) 1fr;
+  }
+
+  .texto {
+    max-width: 600px;
+    text-align: left;
+  }
+
+  .imagen {
+    height: 500px;
+  }
+}
+
+@media (max-width: 680px) {
+  .site-header .container {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding-bottom: 16px;
+  }
+
+  .logo,
+  .site-header nav {
+    justify-self: center;
+  }
+
+  .site-header ul {
+    justify-content: center;
+  }
+
+  footer .container {
+    align-items: center;
+  }
+}
