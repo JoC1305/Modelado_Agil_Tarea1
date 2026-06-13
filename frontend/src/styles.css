@@ -203,6 +203,125 @@ p {
   font-weight: 700;
 }
 
+.plato-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.plato-form {
+  max-width: 100%;
+  padding: 16px 0;
+}
+
+.estado-plato {
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.estado-disponible {
+  color: #024e1b;
+  background: rgba(2, 78, 27, 0.12);
+}
+
+.estado-agotado {
+  color: crimson;
+  background: rgba(220, 20, 60, 0.12);
+}
+
+.plato-agotado .imagen {
+  opacity: 0.55;
+}
+
+.menu-error {
+  color: crimson;
+  font-weight: 700;
+}
+
+.btn-secondary {
+  background-color: #555;
+}
+
+.btn-danger {
+  background-color: crimson;
+}
+
+.menu-admin {
+  background: #f4f4f4;
+  border-bottom: 3px solid #024e1b;
+}
+
+.menu-admin-desc {
+  margin-bottom: 20px;
+}
+
+.menu-admin-alert {
+  background: #fff;
+  border: 1px solid crimson;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.menu-admin-hint {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.menu-admin-hint code {
+  background: #eee;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.menu-admin-lista {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.menu-admin-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 16px;
+}
+
+.menu-admin-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.menu-admin-card h3 {
+  margin: 0 0 4px;
+  text-align: left;
+  font-size: 1.4rem;
+}
+
+.menu-admin-id {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.menu-admin-descripcion {
+  margin: 0 0 12px;
+  padding-left: 20px;
+  text-align: left;
+}
+
+.menu-admin-descripcion li {
+  margin-bottom: 4px;
+}
+
 .page {
   padding: 36px 0 80px;
 }

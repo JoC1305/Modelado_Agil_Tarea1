@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import logo from '../assets/imgs/logo.png';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://backend-capocannoniere-env.eba-9sdjrvpx.us-east-2.elasticbeanstalk.com/';
 
 const navItems = [
   { id: 'inicio', label: 'Inicio' },
@@ -7,26 +9,55 @@ const navItems = [
   { id: 'acerca', label: 'Quiénes somos' },
 ];
 
-const platos = [
-  {
-    id: 'rossonero',
-    nombre: 'Il rossonero',
-    descripcion: ['Risotto alla Milanese con ossobuco', 'Vino tinto Chianti Classico', 'Tiramisú tradicional'],
-    precio: '$25',
-  },
-  {
-    id: 'nerazzurro',
-    nombre: 'Il nerazzurro',
-    descripcion: ['Risotto al nero di seppia', 'Café espresso', 'Panacotta con frutos rojos'],
-    precio: '$25',
-  },
-  {
-    id: 'bianconero',
-    nombre: 'La vecchia signora',
-    descripcion: ['Tajarin al tartufo bianco', 'Barolo', 'Bonet piemontese'],
-    precio: '$25',
-  },
-];
+async function obtenerPlatos() {
+  const response = await fetch(`${API_URL}/api/platos`);
+  if (!response.ok) {
+    throw new Error('No se pudieron cargar los platos');
+  }
+  return response.json();
+}
+
+async function crearPlato(datos) {
+  const response = await fetch(`${API_URL}/api/platos`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => null);
+    const mensaje = typeof error?.detail === 'string' ? error.detail : 'No se pudo agregar el plato';
+    throw new Error(mensaje);
+  }
+  return response.json();
+}
+
+async function eliminarPlato(id) {
+  const response = await fetch(`${API_URL}/api/platos/${id}`, { method: 'DELETE' });
+  if (!response.ok) {
+    throw new Error('No se pudo eliminar el plato');
+  }
+  return response.json();
+}
+
+async function editarPlato(id, datos) {
+  const response = await fetch(`${API_URL}/api/platos/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos),
+  });
+  if (!response.ok) {
+    throw new Error('No se pudo editar el plato');
+  }
+  return response.json();
+}
+
+async function cambiarEstadoPlato(id) {
+  const response = await fetch(`${API_URL}/api/platos/${id}/estado`, { method: 'PATCH' });
+  if (!response.ok) {
+    throw new Error('No se pudo cambiar el estado del plato');
+  }
+  return response.json();
+}
 
 function Header({ activePage, onNavigate }) {
   return (
@@ -119,32 +150,305 @@ function Inicio({ onNavigate }) {
   );
 }
 
-function Menu() {
+function PlatoForm({ plato, onSave, onCancel, esNuevo = false }) {
+  const [id, setId] = useState(plato?.id || '');
+  const [nombre, setNombre] = useState(plato?.nombre || '');
+  const [precio, setPrecio] = useState(plato?.precio || '');
+  const [descripcion, setDescripcion] = useState(plato?.descripcion?.join('\n') || '');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const datos = {
+      nombre,
+      precio,
+      descripcion: descripcion.split('\n').map((linea) => linea.trim()).filter(Boolean),
+    };
+    if (esNuevo) {
+      onSave({ id: id.trim().toLowerCase().replace(/\s+/g, '-'), ...datos });
+      return;
+    }
+    onSave(datos);
+  };
+
   return (
-    <main>
-      {platos.map((plato) => (
-        <section className="plato" id={plato.id} key={plato.id}>
-          <div className="container split">
-            <div className="imagen" aria-hidden="true"></div>
-            <div className="texto">
-              <h1>{plato.nombre}</h1>
-              <p>
-                {plato.descripcion.map((linea) => (
-                  <span key={linea}>
-                    {linea}
-                    <br />
-                  </span>
-                ))}
-              </p>
-              <p className="precio">Precio: {plato.precio}</p>
-            </div>
-          </div>
-        </section>
-      ))}
-    </main>
+    <form className="plato-form" onSubmit={handleSubmit}>
+      {esNuevo && (
+        <label>
+          Identificador (sin espacios)
+          <input
+            value={id}
+            onChange={(event) => setId(event.target.value)}
+            placeholder="ej: carbonara"
+            required
+          />
+        </label>
+      )}
+      <label>
+        Nombre
+        <input value={nombre} onChange={(event) => setNombre(event.target.value)} required />
+      </label>
+      <label>
+        Precio
+        <input value={precio} onChange={(event) => setPrecio(event.target.value)} placeholder="$25" required />
+      </label>
+      <label>
+        Descripción (una línea por ítem)
+        <textarea value={descripcion} onChange={(event) => setDescripcion(event.target.value)} required />
+      </label>
+      <div className="plato-actions">
+        <button className="boton" type="submit">
+          {esNuevo ? 'Agregar plato' : 'Guardar cambios'}
+        </button>
+        <button className="btn btn-secondary" type="button" onClick={onCancel}>
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 }
 
+function GestionMenu({
+  platos,
+  error,
+  cargando,
+  onRecargar,
+  onAgregar,
+  onEditar,
+  onEliminar,
+  onCambiarEstado,
+}) {
+  const [mostrarFormularioNuevo, setMostrarFormularioNuevo] = useState(false);
+  const [editandoId, setEditandoId] = useState(null);
+
+  const handleAgregar = async (datos) => {
+    await onAgregar(datos);
+    setMostrarFormularioNuevo(false);
+  };
+
+  const handleEditar = async (id, datos) => {
+    await onEditar(id, datos);
+    setEditandoId(null);
+  };
+
+  return (
+    <section className="menu-admin page">
+      <div className="container">
+        <h2>Gestión del menú</h2>
+        <p className="menu-admin-desc">
+          Desde aquí puedes agregar, editar, eliminar platos y cambiar su disponibilidad.
+        </p>
+
+        {error && (
+          <div className="menu-admin-alert">
+            <p className="menu-error">{error}</p>
+            <p className="menu-admin-hint">
+              Asegúrate de tener el backend en ejecución:{' '}
+              <code>uvicorn main:app --reload</code> en la carpeta <code>backend</code>.
+            </p>
+            <button className="boton" type="button" onClick={onRecargar}>
+              Reintentar conexión
+            </button>
+          </div>
+        )}
+
+        {!mostrarFormularioNuevo && (
+          <button className="boton" type="button" onClick={() => setMostrarFormularioNuevo(true)}>
+            + Agregar plato
+          </button>
+        )}
+
+        {mostrarFormularioNuevo && (
+          <div className="menu-admin-card">
+            <h3>Nuevo plato</h3>
+            <PlatoForm
+              esNuevo
+              plato={null}
+              onSave={handleAgregar}
+              onCancel={() => setMostrarFormularioNuevo(false)}
+            />
+          </div>
+        )}
+
+        {cargando ? (
+          <p>Cargando platos...</p>
+        ) : (
+          <div className="menu-admin-lista">
+            {platos.length === 0 ? (
+              <p>No hay platos registrados. Usa el botón &quot;Agregar plato&quot; para crear uno.</p>
+            ) : (
+              platos.map((plato) => (
+                <article className="menu-admin-card" key={plato.id}>
+                  {editandoId === plato.id ? (
+                    <>
+                      <h3>Editar: {plato.nombre}</h3>
+                      <PlatoForm
+                        plato={plato}
+                        onSave={(datos) => handleEditar(plato.id, datos)}
+                        onCancel={() => setEditandoId(null)}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="menu-admin-card-header">
+                        <div>
+                          <h3>{plato.nombre}</h3>
+                          <p className="menu-admin-id">ID: {plato.id}</p>
+                        </div>
+                        <span className={`estado-plato estado-${plato.estado}`}>
+                          {plato.estado === 'disponible' ? 'Disponible' : 'Agotado'}
+                        </span>
+                      </div>
+                      <ul className="menu-admin-descripcion">
+                        {plato.descripcion.map((linea) => (
+                          <li key={linea}>{linea}</li>
+                        ))}
+                      </ul>
+                      <p className="precio">Precio: {plato.precio}</p>
+                      <div className="plato-actions">
+                        <button className="boton" type="button" onClick={() => setEditandoId(plato.id)}>
+                          Editar
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          type="button"
+                          onClick={() => onCambiarEstado(plato.id)}
+                        >
+                          {plato.estado === 'disponible' ? 'Marcar agotado' : 'Marcar disponible'}
+                        </button>
+                        <button className="btn btn-danger" type="button" onClick={() => onEliminar(plato.id)}>
+                          Eliminar
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </article>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function Menu() {
+  const [platos, setPlatos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
+
+  const cargarPlatos = useCallback(async () => {
+    setCargando(true);
+    setError('');
+    try {
+      const data = await obtenerPlatos();
+      setPlatos(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setCargando(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    cargarPlatos();
+  }, [cargarPlatos]);
+
+  const handleAgregar = async (datos) => {
+    try {
+      const platoNuevo = await crearPlato(datos);
+      setPlatos((prev) => [...prev, platoNuevo]);
+      setError('');
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Deseas eliminar este plato del menú?')) {
+      return;
+    }
+    try {
+      await eliminarPlato(id);
+      setPlatos((prev) => prev.filter((plato) => plato.id !== id));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleEditar = async (id, datos) => {
+    try {
+      const platoActualizado = await editarPlato(id, datos);
+      setPlatos((prev) => prev.map((plato) => (plato.id === id ? platoActualizado : plato)));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const handleCambiarEstado = async (id) => {
+    try {
+      const platoActualizado = await cambiarEstadoPlato(id);
+      setPlatos((prev) => prev.map((plato) => (plato.id === id ? platoActualizado : plato)));
+      setError('');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <main>
+      <GestionMenu
+        platos={platos}
+        error={error}
+        cargando={cargando}
+        onRecargar={cargarPlatos}
+        onAgregar={handleAgregar}
+        onEditar={handleEditar}
+        onEliminar={handleEliminar}
+        onCambiarEstado={handleCambiarEstado}
+      />
+
+      {!cargando && platos.length > 0 && (
+        <>
+          <section className="page">
+            <div className="container">
+              <h2>Vista del menú</h2>
+            </div>
+          </section>
+          {platos.map((plato) => (
+            <section
+              className={`plato ${plato.estado === 'agotado' ? 'plato-agotado' : ''}`}
+              id={plato.id}
+              key={plato.id}
+            >
+              <div className="container split">
+                <div className="imagen" aria-hidden="true"></div>
+                <div className="texto">
+                  <h1>{plato.nombre}</h1>
+                  <p className={`estado-plato estado-${plato.estado}`}>
+                    {plato.estado === 'disponible' ? 'Disponible' : 'Agotado'}
+                  </p>
+                  <p>
+                    {plato.descripcion.map((linea) => (
+                      <span key={linea}>
+                        {linea}
+                        <br />
+                      </span>
+                    ))}
+                  </p>
+                  <p className="precio">Precio: {plato.precio}</p>
+                </div>
+              </div>
+            </section>
+          ))}
+        </>
+      )}
+    </main>
+  );
+}
 
 function Acerca() {
   return (
