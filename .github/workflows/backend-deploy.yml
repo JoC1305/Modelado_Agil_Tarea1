@@ -22,7 +22,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.SECRET_ACCES_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
     # 3. Iniciar sesión en AWS ECR
