@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+origins = "*"
 app = FastAPI(
     title="API de Tarea Multi-Cloud",
     description="Backend en AWS FastAPI conectado con Frontend en GCP Cloud Run",
@@ -10,7 +10,7 @@ app = FastAPI(
 # Configurar CORS para permitir que Cloud Run consulte la API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # En producción se cambia por la URL exacta de Cloud Run
+    allow_origins=[origins],  # En producción se cambia por la URL exacta de Cloud Run
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
