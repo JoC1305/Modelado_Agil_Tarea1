@@ -40,3 +40,20 @@ jobs:
         cd backend
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Generate Deployment Package
+      run: |
+        cd backend
+        zip -r ../deploy.zip ./*
+
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.SECRET_ACCES_KEY }}
+        application_name: 'backend-capocannoniere'
+        environment_name: 'Backend-capocannoniere-env'
+        version_label: ${{ github.sha }}
+        region: us-east-2
+        deployment_package: deploy.zip # 👈 Le pasamos todo el paquete comprimido con el Dockerfile real
+        use_existing_version_if_available: true
