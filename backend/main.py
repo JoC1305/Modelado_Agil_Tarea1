@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 origins = ["https://modelado-agil-tarea1-363487501200.us-west1.run.app",
-           "http://localhost:5173" #Pruebas locales]
+           "http://localhost:5173"] #Pruebas locales
 app = FastAPI(
     title="API de Tarea Multi-Cloud",
     description="Backend en AWS FastAPI conectado con Frontend en GCP Cloud Run",
