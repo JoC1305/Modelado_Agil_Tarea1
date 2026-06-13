@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import logo from '../assets/imgs/logo.png';
 
-const BACKEND_URL = 'http://backend-capocannoniere-env.eba-9sdjrvpx.us-east-2.elasticbeanstalk.com';
-const API_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? BACKEND_URL : '');
+const API_URL = 'http://backend-capocannoniere-env.eba-9sdjrvpx.us-east-2.elasticbeanstalk.com'
 
 const navItems = [
   { id: 'inicio', label: 'Inicio' },
